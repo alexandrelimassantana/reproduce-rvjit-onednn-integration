@@ -1,0 +1,43 @@
+# Smoke tests of the pre-packed weights of the rv64 GEMM (jit:rvv), on small
+# problems at their edges: N tails, N below one strip, broadcast and per-batch
+# weights, bias and post-ops, the transposed tag, and thread partitions over M
+# and K.
+
+--reset
+--impl=jit:rvv
+--dt=f32,f16,bf16,s8:s8:s32,u8:s8:f32,s8:s8:s8
+--stag=any --dtag=any --wtag=any,abx
+64x300:300x77
+5x1000:1000x130
+96x700:700x264
+130x40:40x515
+1x17:17x15
+4x20x260:1x260x150
+3x31x300:3x300x70
+2x2x9x40:2x1x40x65
+
+# Bias and post-ops with packed weights
+--reset
+--impl=jit:rvv
+--dt=f32
+--wtag=any
+--bia-dt=f32 --bia_mask=2
+--attr-post-ops=,relu+add:f32:per_oc
+64x300:300x77
+4x20x260:1x260x150
+
+# The 2D transposed tag stays on the plain path
+--reset
+--impl=jit:rvv
+--dt=f32,s8:s8:s32
+--wtag=ba
+64x300:300x77
+
+# Thread partitions over M (the weights' N) and K, aligned to panels
+--reset
+--impl=jit:rvv
+--dt=f32,f16,s8:s8:s32
+--wtag=any
+16x256:256x2000
+8x4000:4000x300
+3x9x5000:1x5000x333

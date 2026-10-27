@@ -1,0 +1,9 @@
+# The shapes of oneDNN's conv/shapes_resnet_50 written with groups (g1),
+# whose weights are 5D (plain tag hwigo)
+g1mb50ic3ih224iw224oc64oh112ow112kh7kw7sh2sw2ph3pw3n"resnet_50:conv1"
+g1mb50ic256ih56iw56oc512oh28ow28kh1kw1sh2sw2ph0pw0n"resnet_50:res3a_branch1"
+g1mb50ic256ih56iw56oc128oh28ow28kh1kw1sh2sw2ph0pw0n"resnet_50:res3a_branch2a"
+g1mb50ic512ih28iw28oc1024oh14ow14kh1kw1sh2sw2ph0pw0n"resnet_50:res4a_branch1"
+g1mb50ic512ih28iw28oc256oh14ow14kh1kw1sh2sw2ph0pw0n"resnet_50:res4a_branch2a"
+g1mb50ic1024ih14iw14oc2048oh7ow7kh1kw1sh2sw2ph0pw0n"resnet_50:res5a_branch1"
+g1mb50ic1024ih14iw14oc512oh7ow7kh1kw1sh2sw2ph0pw0n"resnet_50:res5a_branch2a"

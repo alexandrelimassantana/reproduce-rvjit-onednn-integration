@@ -1,0 +1,7 @@
+sources/
+build/
+install/
+results/
+csv/
+figures/
+__pycache__/

@@ -1,0 +1,18 @@
+# The layers of oneDNN's conv/shapes_resnet_50 that reach the brgemm or 1x1
+# convolution in f16 and bf16 (nhwc, batch 1). Left out, as they go to the
+# reference: conv1 (IC 3), the stride-2 1x1 layers of res4a and res5a, and
+# the 3x3 layers with an output width below 20 (res4a_branch2b,
+# res5a_branch2b).
+mb50ic64ih56oc256oh56kh1ph0n"resnet_50:res2a_branch1*4"
+mb50ic64ih56oc64oh56kh1ph0n"resnet_50:res2a_branch2a"
+mb50ic64ih56oc64oh56kh3ph1n"resnet_50:res2a_branch2b*3"
+mb50ic256ih56oc64oh56kh1ph0n"resnet_50:res2b_branch2a*2"
+g1mb50ic256ih56iw56oc512oh28ow28kh1kw1sh2sw2ph0pw0n"resnet_50:res3a_branch1"
+g1mb50ic256ih56iw56oc128oh28ow28kh1kw1sh2sw2ph0pw0n"resnet_50:res3a_branch2a"
+mb50ic128ih28oc128oh28kh3ph1n"resnet_50:res3a_branch2b*4"
+mb50ic128ih28oc512oh28kh1ph0n"resnet_50:res3a_branch2c*4"
+mb50ic512ih28oc128oh28kh1ph0n"resnet_50:res3b_branch2a*3"
+mb50ic256ih14oc1024oh14kh1ph0n"resnet_50:res4a_branch2c*6"
+mb50ic1024ih14oc256oh14kh1ph0n"resnet_50:res4b_branch2a*5"
+mb50ic512ih7oc2048oh7kh1ph0n"resnet_50:res5a_branch2c*3"
+mb50ic2048ih7oc512oh7kh1ph0n"resnet_50:res5b_branch2a*2"

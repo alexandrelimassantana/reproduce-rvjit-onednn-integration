@@ -1,0 +1,19 @@
+# Smoke tests of the brgemm inner product (brgemm:rvv) at its edges: OC around
+# the dispatch threshold (16) and the kernel's M tile, IC below 64, OC tails,
+# on both sides of the MB guards, with blocked and plain weights. ab weights
+# fall back to the gemm inner product (f32) or the reference.
+
+--reset
+--dt=f32,bf16:bf16:f32,f16:f16:f32,f16:f16:f16
+--dir=FWD_B
+--mb=1,4,32
+--stag=any --dtag=any
+--wtag=any,ba
+ic64oc15n"oc_below_16"
+ic64oc16n"oc_16"
+ic64oc17n"oc_17"
+ic63oc64n"ic_below_64"
+ic256oc100n"oc_tail"
+ic520oc72n"ic_oc_tails"
+--wtag=ab
+ic256oc64n"ab"

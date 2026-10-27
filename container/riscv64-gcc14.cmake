@@ -1,0 +1,11 @@
+# Cross-compiles for riscv64 Linux with the GCC 14 of container/Containerfile
+# (the same as oneDNN's cmake/toolchains/riscv64.cmake)
+set(CMAKE_SYSTEM_NAME Linux)
+set(CMAKE_SYSTEM_PROCESSOR riscv64)
+set(CMAKE_C_COMPILER riscv64-linux-gnu-gcc-14)
+set(CMAKE_CXX_COMPILER riscv64-linux-gnu-g++-14)
+set(CMAKE_FIND_ROOT_PATH /usr/riscv64-linux-gnu)
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)

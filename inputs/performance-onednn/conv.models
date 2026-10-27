@@ -1,0 +1,10 @@
+# oneDNN's model shapes on the half-precision convolutions conv.nightly (f32)
+# leaves out: the ResNet-50 layers that reach the brgemm or 1x1 convolution in
+# bf16 and f16 with an f32 dst, nhwc, batch 1.
+
+--reset
+--dt=bf16:bf16:f32,f16:f16:f32
+--dir=FWD_B --alg=direct
+--mb=1
+--stag=axb --dtag=axb --wtag=any
+--batch=include/shapes_resnet_50_half

@@ -1,0 +1,16 @@
+# Inner product over oneDNN's CI shapes (ip/shapes_ci).
+#
+# The brgemm inner product (brgemm:rvv) takes forward, 2D, OC >= 16, IC >= 64
+# without attributes, in f32, bf16 and f16 (with an f16 dst for f16). The PR
+# blocks the weights left to the primitive by the kernel's M tile and keeps
+# the MB/OC cache guards for plain weights only; mb 1, 4 and 32 sit on both
+# sides of them. ba user weights are still accepted. ab weights, which it
+# declines, go to the gemm inner product (gemm:rvv, f32, on the rvjit sgemm).
+
+--reset
+--dt=f32,bf16:bf16:f32,f16:f16:f32,f16:f16:f16
+--dir=FWD_B
+--mb=1,4,32
+--stag=any --dtag=any
+--wtag=any,ba,ab
+--batch=shapes_ci

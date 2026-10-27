@@ -1,0 +1,11 @@
+# dt: f32,bf16:bf16:f32,f16:f16:f32
+#
+# The IPDPS'26 convolutions that reach an implementation the PR changes,
+# forward with bias, nhwc, batch 1, under natural dispatch: the 1x1 ones go to
+# the 1x1 convolution (f32) or the brgemm one (bf16, f16), the others to the
+# brgemm convolution.
+
+--dir=FWD_B --alg=direct --mb=1
+--stag=axb --dtag=axb --wtag=any
+--batch=include/shapes_ipdps26_1x1
+--batch=include/shapes_ipdps26_brgemm
