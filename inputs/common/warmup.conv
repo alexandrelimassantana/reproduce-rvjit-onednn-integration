@@ -1,0 +1,10 @@
+# Warm-up, run first by performance.sh and perfci.sh in every benchdnn
+# process, for both flavors (see warmup.matmul). The analysis drops every
+# problem named warmup:*.
+--dir=FWD_B --alg=direct --mb=1
+--wtag=any --attr-post-ops=
+--stag=axb --dtag=axb
+ic64ih14oc64oh14kh1ph0n"warmup:1x1"
+ic32ih28oc32oh28kh3ph1n"warmup:3x3"
+--stag=abx --dtag=abx
+ic32ih28oc32oh28kh3ph1n"warmup:ncsp"

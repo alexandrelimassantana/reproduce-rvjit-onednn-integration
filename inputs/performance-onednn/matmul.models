@@ -1,0 +1,11 @@
+# oneDNN's model shapes on the matmul paths matmul.nightly leaves out: the
+# bf16 GEMM path (jit:rvv), with the shapes of the perf-CI nightly (ResNet-50
+# and BERT inner products as matmuls), bias on and off.
+
+--reset
+--dt=bf16:bf16:bf16
+--bia-dt=undef
+--bia_mask=2
+--batch=shapes_converted_ip_inf_lb_resnet
+--bia_mask=4
+--batch=shapes_bert

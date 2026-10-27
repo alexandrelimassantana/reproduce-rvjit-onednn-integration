@@ -1,0 +1,54 @@
+# Smoke tests of the convolutions the PR changes, on small problems.
+
+# brgemm convolution (brgemm:rvv) at its edges: ow 19 (declined) and 20, IC
+# below 16 (declined), OC below the kernel's M tile (weights stay plain) and
+# OC tails, with blocked and plain weights, and the sum post-op
+--reset
+--dt=f32,bf16:bf16:f32,f16:f16:f32
+--dir=FWD_B --alg=direct --mb=1
+--stag=axb --dtag=axb
+--wtag=any,hwio
+--attr-post-ops=,sum:0.5
+ic32ih19oc32oh19kh3ph1n"ow_19"
+ic32ih20oc32oh20kh3ph1n"ow_20"
+ic15ih24oc32oh24kh3ph1n"ic_below_16"
+ic16ih24oc8oh24kh3ph1n"oc_below_tile"
+ic64ih28oc100oh28kh3ph1n"oc_tail"
+
+# 1x1 convolution (jit_1x1:rvv): OC below its OC block (the weights stay
+# plain), channel tails and groups
+--reset
+--dt=f32,f16:f16:f16
+--dir=FWD_B --alg=direct --mb=1,2
+--stag=axb --dtag=axb --wtag=any
+ic64ih28oc4oh28kh1ph0n"small_oc:4"
+ic64ih28oc8oh28kh1ph0n"small_oc:8"
+ic32ih14oc12oh14kh1ph0n"small_oc:12"
+ic96ih14oc24oh14kh1ph0n"small_oc:24"
+ic17ih30oc33oh30kh1ph0n"tail:ic17oc33"
+ic100ih21oc70oh21kh1ph0n"tail:ic100oc70"
+g2ic64ih14oc64oh14kh1ph0n"grouped:g2"
+
+# The same on the 1x1 convolution only (--impl=jit_1x1) for bf16 and f16 with
+# an f32 dst, which the brgemm convolution takes first under natural dispatch
+--impl=jit_1x1
+--dt=bf16:bf16:f32,f16:f16:f32
+ic64ih28oc4oh28kh1ph0n"small_oc:4"
+ic96ih14oc24oh14kh1ph0n"small_oc:24"
+ic17ih30oc33oh30kh1ph0n"tail:ic17oc33"
+ic100ih21oc70oh21kh1ph0n"tail:ic100oc70"
+ic64ih56oc256oh56kh1ph0n"resnet_50:res2a_branch1"
+ic256ih56oc64oh56kh1ph0n"resnet_50:res2b_branch2a"
+
+# User weights in the fixed OC-blocked tags, which upstream's 1x1 convolution
+# accepts when the block matches its VLEN; the PR's accepts only its tuned
+# block, so these run on whichever implementation takes them (the change of
+# implementation shows in dispatch.csv)
+--reset
+--dt=f32
+--dir=FWD_B --alg=direct --mb=1
+--stag=axb --dtag=axb
+--wtag=Oihw8o,Oihw16o,Oihw32o
+ic64ih56oc256oh56kh1ph0n"resnet_50:res2a_branch1"
+ic512ih28oc128oh28kh1ph0n"resnet_50:res3b_branch2a"
+ic96ih14oc24oh14kh1ph0n"small_oc:24"

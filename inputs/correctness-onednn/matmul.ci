@@ -1,0 +1,30 @@
+# Matmul over oneDNN's CI shapes (shapes_2d_ci: DLRM, NCF, RNN-T; shapes_2d,
+# shapes_3d) on the rv64 GEMM (jit:rvv): every data-type path, the weights
+# left to the primitive (pre-packed panels) against row- and column-major
+# user weights, and the attributes the f32 path takes.
+
+# Every data-type path
+--reset
+--dt=f32,f16:f16:f16,bf16:bf16:bf16,s8:s8:s32
+--stag=abx --dtag=abx
+--wtag=any,abx,ba
+--batch=shapes_2d_ci
+--batch=shapes_2d
+--wtag=any,abx,acb
+--batch=shapes_3d
+
+# The other int8 source and destination types
+--reset
+--dt=u8:s8:s32,u8:s8:f32,s8:s8:s8
+--stag=abx --dtag=abx
+--wtag=any,abx,ba
+--batch=shapes_2d_ci
+
+# f32 with a bias (one value per N) and post-ops
+--reset
+--dt=f32
+--stag=abx --dtag=abx
+--wtag=any,abx,ba
+--bia-dt=f32 --bia_mask=2
+--attr-post-ops=,relu,add:f32:per_oc
+--batch=shapes_2d_ci

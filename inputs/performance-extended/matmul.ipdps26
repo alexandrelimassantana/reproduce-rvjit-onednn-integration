@@ -1,0 +1,10 @@
+# dt: f32,f16:f16:f16,bf16:bf16:bf16,s8:s8:s32
+#
+# The IPDPS'26 matmuls, plain activations, no bias or post-ops. With more
+# than one thread they all go to the gemm matmul (jit:rvv): weights left to
+# the primitive are pre-packed into its kernel's panels, plain row-major
+# weights are packed at execution as upstream does.
+
+--stag=abx --dtag=abx --wtag=any,abx
+--bia-dt=undef --attr-post-ops=
+--batch=include/shapes_ipdps26_matmul

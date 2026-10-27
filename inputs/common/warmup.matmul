@@ -1,0 +1,9 @@
+# Warm-up, run first by performance.sh and perfci.sh in every benchdnn
+# process, for both flavors. It absorbs the costs a process pays once (loading
+# the library, rvjit's first use, the shared kernels generated on first use) so
+# that they are not charged to the first problem of the batch. The analysis
+# drops every problem named warmup:*.
+--stag=abx --dtag=abx --wtag=any,abx
+--bia-dt=undef --attr-post-ops=
+64x256:256x64n"warmup:2d"
+2x64x256:1x256x64n"warmup:bcast"

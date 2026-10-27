@@ -1,0 +1,16 @@
+# Cross-compiler image for scripts/build.sh: GCC 14 for riscv64 (the version
+# oneDNN's RISC-V CI uses, .github/automation/riscv/ci.json) and CMake.
+#
+#   podman build -t rvjit-repro:gcc14 -f container/Containerfile container
+#
+# build.sh builds it on first use. The toolchain file is
+# container/riscv64-gcc14.cmake, read from the mounted repository.
+FROM docker.io/library/ubuntu:24.04
+
+RUN apt-get update -qq \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends \
+        gcc-14-riscv64-linux-gnu g++-14-riscv64-linux-gnu \
+        cmake make ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+CMD ["/bin/bash"]

@@ -1,0 +1,56 @@
+# oneDNN's ip/test_ip_ci, the batch of ctest's test_benchdnn_modeC_ip_ci_cpu,
+# copied from the PR's head (07f60d9f29db) and limited to inference: the
+# builds have the inference workload only, so the backward sections are
+# removed. Everything else is unchanged.
+
+--reset
+
+--mb=2
+
+# Training
+## Forward
+--dir=FWD_B,FWD_D
+--dt=f32,bf16,f16
+--stag=any,axb
+--dtag=any,axb
+--attr-post-ops=, \
+                sum:0.5, \
+                linear:2:1, \
+                add:f32, \
+                prelu:per_oc, \
+                mul:s8:per_oc+sum:0.25+relu:0.5+add:f32:per_tensor
+--batch=shapes_ci
+## Backward (removed; its post-op reset carries over to inference)
+--attr-post-ops=
+
+# Inference
+--dir=FWD_B,FWD_I
+--stag=any,axb
+--dtag=any,axb
+
+## f16 inference configs (can't run scales)
+--dt=f16:f16:s8,f16:f16:u8
+--batch=shapes_ci
+
+## int8 inference configs
+--attr-scales=,src:common:0.25,wei:per_oc,dst:common:0.25
+--dt=u8:s8:f32,u8:s8:bf16,u8:s8:f16,u8:s8:s32,u8:s8:s8,u8:s8:u8, \
+      s8:s8:f32,s8:s8:bf16,s8:s8:f16,s8:s8:s32,s8:s8:s8,s8:s8:u8
+--batch=shapes_ci
+
+--dt=u8:s8:f32,s8:s8:s32
+--attr-post-ops=, \
+                sum:0.5, \
+                linear:2:1, \
+                add:f32, \
+                prelu:per_oc, \
+                mul:s8:per_oc+sum:0.25+relu:0.5+add:f32:per_tensor
+--batch=shapes_ci
+
+## Check wtag=ba on fwd_training
+--reset
+--dir=FWD_D
+--dt=f32,bf16,f16
+--stag=ab
+--wtag=ba
+--batch=shapes_dlrm # no spatial shapes, fits wtag=ba.

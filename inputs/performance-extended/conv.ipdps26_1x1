@@ -1,0 +1,10 @@
+# dt: f16:f16:f16,bf16:bf16:f32,f16:f16:f32
+#
+# The IPDPS'26 1x1 convolutions on the 1x1 convolution only (--impl=jit_1x1)
+# in the half-precision types: f16:f16:f16 reaches it under natural dispatch,
+# bf16 and f16 with an f32 dst go to the brgemm convolution first.
+
+--impl=jit_1x1
+--dir=FWD_B --alg=direct --mb=1
+--stag=axb --dtag=axb --wtag=any
+--batch=include/shapes_ipdps26_1x1
